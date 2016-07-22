@@ -8,5 +8,6 @@
 
 /comments CommentR POST
 
-/twips/new NewTwipR GET
-/twips     TwipsR   GET POST
+/twips/#TwipId TwipR    GET
+/twips/!new    NewTwipR GET
+/twips         TwipsR   GET POST

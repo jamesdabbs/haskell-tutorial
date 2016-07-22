@@ -4,10 +4,17 @@ import Import hiding (on, (==.)) -- These conflict with similarly named function
 import Yesod.Form.Bootstrap3 (BootstrapFormLayout (..), renderBootstrap3)
 import Database.Esqueleto
 
+getTwipR :: TwipId -> Handler Html
+getTwipR id = do
+  twip <- runDB $ get404 id
+  -- user <- runDB $ get404 $ twipAuthorId twip
+  defaultLayout $ do
+    $(widgetFile "twips/show")
 
 getTwipsR :: Handler Html
 getTwipsR = do
   twips <- runDB twipsWithAuthors
+  name <- lookupGetParam "name"
   defaultLayout $ do
     setTitle "Twips"
     $(widgetFile "twips/index")
@@ -15,7 +22,7 @@ getTwipsR = do
 
 getNewTwipR :: Handler Html
 getNewTwipR = do
-  userId <- requireAuthId
+  userId <- maybeAuthId
   now <- liftIO getCurrentTime
   (formWidget, formEnctype) <- generateFormPost $ twipForm userId now
   defaultLayout $ do
@@ -25,7 +32,7 @@ getNewTwipR = do
 
 postTwipsR :: Handler Html
 postTwipsR = do
-  userId <- requireAuthId
+  userId <- maybeAuthId
   now <- liftIO getCurrentTime
   ((result, formWidget), formEnctype) <- runFormPost $ twipForm userId now
   case result of
@@ -39,7 +46,7 @@ postTwipsR = do
 
 
 
-twipForm :: UserId -> UTCTime -> Form Twip
+twipForm :: Maybe UserId -> UTCTime -> Form Twip
 twipForm userId now = renderBootstrap3 BootstrapBasicForm $ Twip
   <$> pure userId
   <*> areq textField "Title" Nothing
@@ -47,8 +54,8 @@ twipForm userId now = renderBootstrap3 BootstrapBasicForm $ Twip
   <*> pure now
 
 
-twipsWithAuthors :: MonadIO m => SqlPersistT m [(Entity Twip, Entity User)]
+twipsWithAuthors :: MonadIO m => SqlPersistT m [(Entity Twip, Maybe (Entity User))]
 twipsWithAuthors = select $
-  from $ \(twip `InnerJoin` author) -> do
-    on $ twip ^. TwipAuthorId ==. author ^. UserId
+  from $ \(twip `LeftOuterJoin` author) -> do
+    on $ twip ^. TwipAuthorId ==. author ?. UserId
     return $ (twip, author)

@@ -1,5 +1,10 @@
 <h1>All Twips
 
+$maybe n <- name
+  <p>Hello, #{n}!
+$nothing
+  <p>Hello, world!
+
 <table.table.table-striped.table-hover>
   <thead>
     <tr>
@@ -7,10 +12,16 @@
       <th>Published At
       <th>Author
   <tbody>
-    $forall (Entity _ t, Entity _ u) <- twips
+    $forall (Entity id t, mu) <- twips
       <tr>
-        <td>#{twipTitle t}
+        <td>
+          <a href=@{TwipR id}>#{twipTitle t}
         <td>#{formatTime defaultTimeLocale "%b %d, %Y" $ twipPublishedAt t}
-        <td>#{userIdent u}
+        <td>
+          $maybe (Entity _ u) <- mu
+            <p>#{userIdent u}
+          $nothing
+            <p>
+              <i>Anonymous
 
 <a.btn.btn-default href=@{NewTwipR}>New Twip
