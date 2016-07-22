@@ -7,3 +7,6 @@
 / HomeR GET POST
 
 /comments CommentR POST
+
+/twips/new NewTwipR GET
+/twips     TwipsR   GET POST

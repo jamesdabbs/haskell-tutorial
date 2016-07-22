@@ -1,5 +1,5 @@
 {-# LANGUAGE PackageImports #-}
-import "hails" Application (develMain)
+import "twips" Application (develMain)
 import Prelude (IO)
 
 main :: IO ()

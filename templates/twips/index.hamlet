@@ -1,0 +1,16 @@
+<h1>All Twips
+
+<table.table.table-striped.table-hover>
+  <thead>
+    <tr>
+      <th>Title
+      <th>Published At
+      <th>Author
+  <tbody>
+    $forall (Entity _ t, Entity _ u) <- twips
+      <tr>
+        <td>#{twipTitle t}
+        <td>#{formatTime defaultTimeLocale "%b %d, %Y" $ twipPublishedAt t}
+        <td>#{userIdent u}
+
+<a.btn.btn-default href=@{NewTwipR}>New Twip

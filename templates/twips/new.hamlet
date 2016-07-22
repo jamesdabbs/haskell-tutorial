@@ -1,0 +1,3 @@
+<form.form.form-horizontal method=post action=@{TwipsR} enctype=#{formEnctype}>
+  ^{formWidget}
+  <button.btn.btn-primary>Twip!
